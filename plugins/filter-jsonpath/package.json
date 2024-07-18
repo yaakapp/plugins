@@ -1,10 +1,16 @@
 {
   "name": "filter-jsonpath",
   "version": "0.0.1",
+  "scripts": {
+    "build": "yaak-cli src/index.ts"
+  },
   "dependencies": {
     "jsonpath": "^1.1.1"
   },
   "devDependencies": {
-    "@types/jsonpath": "^0.2.4"
+    "@types/jsonpath": "^0.2.4",
+    "@types/node": "^20.14.9",
+    "esbuild": "^0.21.5",
+    "typescript": "^5.5.2"
   }
 }

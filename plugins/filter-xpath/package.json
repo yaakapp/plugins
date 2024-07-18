@@ -1,8 +1,16 @@
 {
   "name": "filter-xpath",
   "version": "0.0.1",
+  "scripts": {
+    "build": "yaak-cli ./src/index.js"
+  },
   "dependencies": {
+    "@types/node": "^20.14.9",
     "@xmldom/xmldom": "^0.8.10",
+    "typescript": "^5.5.2",
     "xpath": "^0.0.34"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.5"
   }
 }

@@ -1,0 +1,8 @@
+{
+  "name": "@yaakapp/plugins",
+  "repository": "https://github.com/yaakapp/plugins",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-plugins.cjs"
+  }
+}
