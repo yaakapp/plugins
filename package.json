@@ -4,8 +4,5 @@
   "private": true,
   "scripts": {
     "build": "node scripts/build-plugins.cjs"
-  },
-  "devDependencies": {
-    "@yaakapp/cli": "^0.0.8"
   }
 }
