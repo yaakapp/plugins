@@ -18,4 +18,7 @@ async function main() {
   }
 }
 
-main().catch(err => console.log('Failed', err));
+main().catch(err => {
+  console.log('Failed', err);
+  process.exit(1);
+});
