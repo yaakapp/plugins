@@ -2,7 +2,7 @@
   "name": "filter-jsonpath",
   "version": "0.0.1",
   "scripts": {
-    "build": "yaak-cli src/index.ts"
+    "build": "yaakcli src/index.ts"
   },
   "dependencies": {
     "jsonpath": "^1.1.1"

@@ -2,7 +2,7 @@
   "name": "exporter-curl",
   "version": "0.0.1",
   "scripts": {
-    "build": "yaak-cli ./src/index.js"
+    "build": "yaakcli ./src/index.js"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",

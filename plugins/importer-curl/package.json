@@ -2,7 +2,7 @@
   "name": "importer-curl",
   "version": "0.0.1",
   "scripts": {
-    "build": "yaak-cli ./src/index.js"
+    "build": "yaakcli ./src/index.js"
   },
   "dependencies": {
     "shell-quote": "^1.8.1"
