@@ -13,6 +13,7 @@ async function main() {
     const pkg = JSON.parse(readFileSync(path.join(pluginDir, 'package.json'), 'utf8'));
 
     console.log('Building plugin', pkg.name, pluginDir);
+    execSync(`npm ci`, {cwd: pluginDir});
     execSync(`npm run build`, {cwd: pluginDir});
   }
 }
