@@ -1,4 +1,4 @@
-export function pluginHookImport(ctx: any, contents: string) {
+export function pluginHookImport(_ctx: any, contents: string) {
   let parsed;
   try {
     parsed = JSON.parse(contents);
