@@ -4,7 +4,6 @@
     "types",
     "plugins"
   ],
-  "exclude": ["plugins/*/node_modules"],
   "compilerOptions": {
     "target": "es2021",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],

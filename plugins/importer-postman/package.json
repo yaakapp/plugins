@@ -1,6 +1,7 @@
 {
   "name": "importer-postman",
   "version": "0.0.1",
+  "main": "./build/index.js",
   "scripts": {
     "build": "yaakcli ./src/index.js"
   },

@@ -26,9 +26,7 @@ export function pluginHookImport(ctx: any, contents: string) {
 
   try {
     parsed = parsed ?? YAML.parse(contents);
-  } catch (e) {
-    console.log('FAILED', e);
-  }
+  } catch (e) { }
 
   if (!isJSObject(parsed)) return;
   if (!Array.isArray(parsed.resources)) return;
