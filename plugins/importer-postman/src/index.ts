@@ -1,4 +1,5 @@
-import { Environment, Folder, HttpRequest, Model, Workspace } from '../../../types/models';
+import { root } from 'postcss';
+import { Environment, Folder, HttpHeader, HttpRequest, Model, Workspace } from '../../../types/models';
 
 const POSTMAN_2_1_0_SCHEMA = 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json';
 const POSTMAN_2_0_0_SCHEMA = 'https://schema.getpostman.com/json/collection/v2.0.0/collection.json';
@@ -66,6 +67,24 @@ export function pluginHookImport(
       const bodyPatch = importBody(r.body);
       const requestAuthPath = importAuth(r.auth);
       const authPatch = requestAuthPath.authenticationType == null ? globalAuth : requestAuthPath;
+
+      const headers: HttpHeader[] = toArray(r.header).map((h) => {
+        return {
+          name: h.key,
+          value: h.value,
+          enabled: !h.disabled,
+        };
+      });
+
+      // Add body headers only if they don't already exist
+      for (const bodyPatchHeader of bodyPatch.headers) {
+        const existingHeader = headers.find(h => h.name.toLowerCase() === bodyPatchHeader.name.toLowerCase());
+        if (existingHeader) {
+          continue;
+        }
+        headers.push(bodyPatchHeader);
+      }
+
       const request: ExportResources['httpRequests'][0] = {
         model: 'http_request',
         id: generateId('http_request'),
@@ -78,17 +97,7 @@ export function pluginHookImport(
         bodyType: bodyPatch.bodyType,
         authentication: authPatch.authentication,
         authenticationType: authPatch.authenticationType,
-        headers: [
-          ...bodyPatch.headers,
-          ...authPatch.headers,
-          ...toArray(r.header).map((h) => {
-            return {
-              name: h.key,
-              value: h.value,
-              enabled: !h.disabled,
-            };
-          }),
-        ],
+        headers,
       };
       exportResources.httpRequests.push(request);
     } else {
@@ -142,11 +151,10 @@ function convertUrl(url: Record<string, any>) {
 
 function importAuth(
   rawAuth: any,
-): Pick<HttpRequest, 'authentication' | 'authenticationType' | 'headers'> {
+): Pick<HttpRequest, 'authentication' | 'authenticationType'> {
   const auth = toRecord(rawAuth);
   if ('basic' in auth) {
     return {
-      headers: [],
       authenticationType: 'basic',
       authentication: {
         username: auth.basic.username || '',
@@ -155,14 +163,13 @@ function importAuth(
     };
   } else if ('bearer' in auth) {
     return {
-      headers: [],
       authenticationType: 'bearer',
       authentication: {
         token: auth.bearer.token || '',
       },
     };
   } else {
-    return { headers: [], authenticationType: null, authentication: {} };
+    return { authenticationType: null, authentication: {} };
   }
 }
 
@@ -250,9 +257,9 @@ function importBody(rawBody: any): Pick<HttpRequest, 'body' | 'bodyType' | 'head
       headers: [],
       bodyType: 'binary',
       body: {
-        filePath: body.file?.src
-      }
-    }
+        filePath: body.file?.src,
+      },
+    };
   } else {
     return { headers: [], bodyType: null, body: {} };
   }
