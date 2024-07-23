@@ -39,7 +39,7 @@ export function pluginHookImport(
     model: 'workspace',
     id: generateId('workspace'),
     name: info.name || 'Postman Import',
-    description: info.description || '',
+    description: info.description?.content ?? info.description ?? '',
     variables:
       root.variable?.map((v: any) => ({
         name: v.key,
@@ -73,7 +73,7 @@ export function pluginHookImport(
         folderId,
         name: v.name,
         method: r.method || 'GET',
-        url: typeof r.url === 'string' ? r.url : toRecord(r.url).raw,
+        url: typeof r.url === 'string' ? r.url : convertUrl(toRecord(r.url)),
         body: bodyPatch.body,
         bodyType: bodyPatch.bodyType,
         authentication: authPatch.authentication,
@@ -101,6 +101,43 @@ export function pluginHookImport(
   }
 
   return { resources: convertTemplateSyntax(exportResources) };
+}
+
+function convertUrl(url: Record<string, any>) {
+  if ('raw' in url) {
+    return url.raw;
+  }
+
+  let v = '';
+
+  if ('protocol' in url && typeof url.protocol === 'string') {
+    v += `${url.protocol}://`;
+  }
+
+  if ('host' in url) {
+    v += `${Array.isArray(url.host) ? url.host.join('.') : url.host}`;
+  }
+
+  if ('port' in url && typeof url.port === 'string') {
+    v += `:${url.port}`;
+  }
+
+  if ('path' in url && Array.isArray(url.path) && url.path.length > 0) {
+    v += `/${Array.isArray(url.path) ? url.path.join('/') : url.path}`;
+  }
+
+  if ('query' in url && Array.isArray(url.query) && url.query.length > 0) {
+    const qs = url.query.map(q => `${q.key ?? ''}=${q.value ?? ''}`).join('&');
+    v += `?${qs}`;
+  }
+
+  if ('hash' in url && typeof url.hash === 'string') {
+    v += `#${url.hash}`;
+  }
+
+  // TODO: Implement url.variables (path variables)
+
+  return v;
 }
 
 function importAuth(
@@ -181,16 +218,16 @@ function importBody(rawBody: any): Pick<HttpRequest, 'body' | 'bodyType' | 'head
         form: toArray(body.formdata).map((f) =>
           f.src != null
             ? {
-                enabled: !f.disabled,
-                contentType: f.contentType ?? null,
-                name: f.key ?? '',
-                file: f.src ?? '',
-              }
+              enabled: !f.disabled,
+              contentType: f.contentType ?? null,
+              name: f.key ?? '',
+              file: f.src ?? '',
+            }
             : {
-                enabled: !f.disabled,
-                name: f.key ?? '',
-                value: f.value ?? '',
-              },
+              enabled: !f.disabled,
+              name: f.key ?? '',
+              value: f.value ?? '',
+            },
         ),
       },
     };
@@ -216,7 +253,8 @@ function importBody(rawBody: any): Pick<HttpRequest, 'body' | 'bodyType' | 'head
 function parseJSONToRecord(jsonStr: string): Record<string, any> | null {
   try {
     return toRecord(JSON.parse(jsonStr));
-  } catch (err) {}
+  } catch (err) {
+  }
   return null;
 }
 

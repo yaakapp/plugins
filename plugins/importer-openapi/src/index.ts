@@ -1,5 +1,5 @@
 import { convert } from 'openapi-to-postmanv2';
-import { pluginHookImport as pluginHookImportPostman } from '../../importer-postman/build';
+import { pluginHookImport as pluginHookImportPostman } from '../../importer-postman';
 import { Folder, HttpRequest, Workspace, Environment } from '../../../types/models';
 
 type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
@@ -15,15 +15,21 @@ export async function pluginHookImport(
   ctx: any,
   contents: string,
 ): Promise<{ resources: ExportResources } | undefined> {
-  const result = await new Promise((resolve, reject) => {
-    convert({ type: 'string', data: contents }, {}, (err, result) => {
-      if (err != null) reject(err);
+  let postmanCollection;
+  try {
+    postmanCollection = await new Promise((resolve, reject) => {
+      convert({ type: 'string', data: contents }, {}, (err, result) => {
+        if (err != null) reject(err);
 
-      if (Array.isArray(result.output) && result.output.length > 0) {
-        resolve(JSON.stringify(result.output[0].data));
-      }
+        if (Array.isArray(result.output) && result.output.length > 0) {
+          resolve(result.output[0].data);
+        }
+      });
     });
-  });
+  } catch (err) {
+    // Probably not an OpenAPI file, so skip it
+    return undefined;
+  }
 
-  return pluginHookImportPostman(ctx, result);
+  return pluginHookImportPostman(ctx, JSON.stringify(postmanCollection));
 }
