@@ -2,7 +2,7 @@
   "name": "filter-jsonpath",
   "version": "0.0.1",
   "scripts": {
-    "build": "BUILD_PLATFORM=browser yaakcli src/index.ts"
+    "build": "cross-env BUILD_PLATFORM=browser yaakcli src/index.ts"
   },
   "dependencies": {
     "jsonpath": "^1.1.1"
@@ -10,6 +10,7 @@
   "devDependencies": {
     "@types/jsonpath": "^0.2.4",
     "@types/node": "^20.14.9",
+    "cross-env": "^7.0.3",
     "typescript": "^5.5.2"
   }
 }
