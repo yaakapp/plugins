@@ -1,5 +1,5 @@
 import { convert } from 'openapi-to-postmanv2';
-import { pluginHookImport as pluginHookImportPostman } from '../../importer-postman';
+import { pluginHookImport as pluginHookImportPostman } from '../../importer-postman/src/index';
 import { Folder, HttpRequest, Workspace, Environment } from '../../../types/models';
 
 type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
