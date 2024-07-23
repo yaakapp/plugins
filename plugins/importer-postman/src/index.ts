@@ -168,7 +168,7 @@ function importAuth(
 
 function importBody(rawBody: any): Pick<HttpRequest, 'body' | 'bodyType' | 'headers'> {
   const body = toRecord(rawBody);
-  if ('graphql' in body) {
+  if (body.mode === 'graphql') {
     return {
       headers: [
         {
@@ -186,7 +186,7 @@ function importBody(rawBody: any): Pick<HttpRequest, 'body' | 'bodyType' | 'head
         ),
       },
     };
-  } else if ('urlencoded' in body) {
+  } else if (body.mode === 'urlencoded') {
     return {
       headers: [
         {
@@ -204,7 +204,7 @@ function importBody(rawBody: any): Pick<HttpRequest, 'body' | 'bodyType' | 'head
         })),
       },
     };
-  } else if ('formdata' in body) {
+  } else if (body.mode === 'formdata') {
     return {
       headers: [
         {
@@ -231,7 +231,7 @@ function importBody(rawBody: any): Pick<HttpRequest, 'body' | 'bodyType' | 'head
         ),
       },
     };
-  } else if ('raw' in body) {
+  } else if (body.mode === 'raw') {
     return {
       headers: [
         {
@@ -245,6 +245,14 @@ function importBody(rawBody: any): Pick<HttpRequest, 'body' | 'bodyType' | 'head
         text: body.raw ?? '',
       },
     };
+  } else if (body.mode === 'file') {
+    return {
+      headers: [],
+      bodyType: 'binary',
+      body: {
+        filePath: body.file?.src
+      }
+    }
   } else {
     return { headers: [], bodyType: null, body: {} };
   }
