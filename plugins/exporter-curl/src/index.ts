@@ -1,8 +1,22 @@
-import { HttpRequest } from '../../../src-web/lib/models';
+import { HttpRequest, YaakContext, YaakPlugin } from '@yaakapp/api';
 
 const NEWLINE = '\\\n ';
 
-export function pluginHookExport(_: any, request: Partial<HttpRequest>) {
+export const plugin: YaakPlugin = {
+  httpRequestActions: [{
+    key: 'export-curl',
+    label: 'Copy as Curl',
+    icon: 'copy',
+    async onSelect(ctx, args) {
+      const rendered_request = await ctx.httpRequest.render({ httpRequest: args.httpRequest });
+      const data = await pluginHookExport(ctx, rendered_request);
+      ctx.clipboard.copyText(data);
+      ctx.toast.show({ variant: 'copied', message: 'Curl copied to clipboard' });
+    },
+  }],
+};
+
+export async function pluginHookExport(_ctx: YaakContext, request: Partial<HttpRequest>) {
   const xs = ['curl'];
 
   // Add method and URL all on first line
@@ -67,7 +81,7 @@ export function pluginHookExport(_: any, request: Partial<HttpRequest>) {
 }
 
 function quote(arg: string): string {
-  const escaped = arg.replace(/'/g, "\\'");
+  const escaped = arg.replace(/'/g, '\\\'');
   return `'${escaped}'`;
 }
 

@@ -5,7 +5,8 @@
     "build": "cross-env BUILD_PLATFORM=browser yaakcli src/index.ts"
   },
   "dependencies": {
-    "jsonpath": "^1.1.1"
+    "jsonpath": "^1.1.1",
+    "@yaakapp/api": "^0.1.6"
   },
   "devDependencies": {
     "@types/jsonpath": "^0.2.4",

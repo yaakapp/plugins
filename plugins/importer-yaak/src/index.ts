@@ -1,4 +1,6 @@
-export function pluginHookImport(_ctx: any, contents: string) {
+import { YaakContext } from '@yaakapp/api';
+
+export function pluginHookImport(_ctx: YaakContext, contents: string) {
   let parsed;
   try {
     parsed = JSON.parse(contents);
@@ -24,6 +26,6 @@ export function pluginHookImport(_ctx: any, contents: string) {
   return { resources: parsed.resources }; // Should already be in the correct format
 }
 
-export function isJSObject(obj: any) {
+function isJSObject(obj: any) {
   return Object.prototype.toString.call(obj) === '[object Object]';
 }

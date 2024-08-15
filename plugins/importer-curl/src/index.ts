@@ -1,12 +1,5 @@
+import { Environment, Folder, HttpRequest, HttpUrlParameter, Model, Workspace, YaakContext } from '@yaakapp/api';
 import { ControlOperator, parse, ParseEntry } from 'shell-quote';
-import {
-  Environment,
-  Folder,
-  HttpRequest,
-  HttpUrlParameter,
-  Model,
-  Workspace,
-} from '../../../src-web/lib/models';
 
 type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
@@ -39,7 +32,7 @@ type Pair = string | boolean;
 
 type PairsByName = Record<string, Pair[]>;
 
-export function pluginHookImport(_: any, rawData: string) {
+export function pluginHookImport(ctx: YaakContext, rawData: string) {
   if (!rawData.match(/^\s*curl /)) {
     return null;
   }
@@ -92,7 +85,7 @@ export function pluginHookImport(_: any, rawData: string) {
 
     if (op?.startsWith('$')) {
       // Handle the case where literal like -H $'Header: \'Some Quoted Thing\''
-      const str = op.slice(2, op.length - 1).replace(/\\'/g, "'");
+      const str = op.slice(2, op.length - 1).replace(/\\'/g, '\'');
 
       currentCommand.push(str);
       continue;
@@ -192,9 +185,9 @@ function importCommand(parseEntries: ParseEntry[], workspaceId: string) {
   const authenticationType = username ? (isDigest ? 'digest' : 'basic') : null;
   const authentication = username
     ? {
-        username: username.trim(),
-        password: (password ?? '').trim(),
-      }
+      username: username.trim(),
+      password: (password ?? '').trim(),
+    }
     : {};
 
   // Headers
@@ -413,6 +406,7 @@ function splitOnce(str: string, sep: string): string[] {
 }
 
 const idCount: Partial<Record<Model['model'], number>> = {};
+
 function generateId(model: Model['model']): string {
   idCount[model] = (idCount[model] ?? -1) + 1;
   return `GENERATE_ID::${model.toUpperCase()}_${idCount[model]}`;

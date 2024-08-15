@@ -5,6 +5,9 @@
   "scripts": {
     "build": "yaakcli ./src/index.js"
   },
+  "dependencies": {
+    "@yaakapp/api": "^0.1.6"
+  },
   "devDependencies": {
     "@types/node": "^20.14.9",
     "esbuild": "^0.21.5",

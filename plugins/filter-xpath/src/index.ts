@@ -1,10 +1,17 @@
 import { DOMParser } from '@xmldom/xmldom';
+import { YaakContext } from '@yaakapp/api';
 import xpath from 'xpath';
 
 export function pluginHookResponseFilter(
-  _ctx: any,
+  _ctx: YaakContext,
   { filter, body }: { filter: string; body: string },
 ) {
   const doc = new DOMParser().parseFromString(body, 'text/xml');
-  return `${xpath.select(filter, doc)}`;
+  const result = xpath.select(filter, doc, false);
+  if (Array.isArray(result)) {
+    return result.map(r => String(r)).join('\n');
+  } else {
+    // Not sure what cases this happens in (?)
+    return String(result);
+  }
 }

@@ -1,5 +1,4 @@
-import { root } from 'postcss';
-import { Environment, Folder, HttpHeader, HttpRequest, Model, Workspace } from '../../../types/models';
+import { Environment, Folder, HttpRequest, HttpRequestHeader, Model, Workspace, YaakContext } from '@yaakapp/api';
 
 const POSTMAN_2_1_0_SCHEMA = 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json';
 const POSTMAN_2_0_0_SCHEMA = 'https://schema.getpostman.com/json/collection/v2.0.0/collection.json';
@@ -15,7 +14,7 @@ interface ExportResources {
 }
 
 export function pluginHookImport(
-  _ctx: any,
+  _ctx: YaakContext,
   contents: string,
 ): { resources: ExportResources } | undefined {
   const root = parseJSONToRecord(contents);
@@ -68,7 +67,7 @@ export function pluginHookImport(
       const requestAuthPath = importAuth(r.auth);
       const authPatch = requestAuthPath.authenticationType == null ? globalAuth : requestAuthPath;
 
-      const headers: HttpHeader[] = toArray(r.header).map((h) => {
+      const headers: HttpRequestHeader[] = toArray(r.header).map((h) => {
         return {
           name: h.key,
           value: h.value,

@@ -5,6 +5,7 @@
     "build": "yaakcli ./src/index.js"
   },
   "dependencies": {
+    "@yaakapp/api": "^0.1.6",
     "@types/node": "^20.14.9",
     "@xmldom/xmldom": "^0.8.10",
     "typescript": "^5.5.2",
