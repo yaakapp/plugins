@@ -1,4 +1,4 @@
-import { Environment, Folder, GrpcRequest, HttpRequest, Workspace, YaakContext } from '@yaakapp/api';
+import { Environment, Folder, GrpcRequest, HttpRequest, Workspace, Context } from '@yaakapp/api';
 import YAML from 'yaml';
 
 type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
@@ -11,7 +11,7 @@ export interface ExportResources {
   folders: AtLeast<Folder, 'name' | 'id' | 'model' | 'workspaceId'>[];
 }
 
-export function pluginHookImport(ctx: YaakContext, contents: string) {
+export function pluginHookImport(ctx: Context, contents: string) {
   let parsed: any;
 
   try {

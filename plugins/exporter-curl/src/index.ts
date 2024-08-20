@@ -1,8 +1,8 @@
-import { HttpRequest, YaakContext, YaakPlugin } from '@yaakapp/api';
+import { Context, HttpRequest, Plugin } from '@yaakapp/api';
 
 const NEWLINE = '\\\n ';
 
-export const plugin: YaakPlugin = {
+export const plugin: Plugin = {
   httpRequestActions: [{
     key: 'export-curl',
     label: 'Copy as Curl',
@@ -16,7 +16,7 @@ export const plugin: YaakPlugin = {
   }],
 };
 
-export async function pluginHookExport(_ctx: YaakContext, request: Partial<HttpRequest>) {
+export async function pluginHookExport(_ctx: Context, request: Partial<HttpRequest>) {
   const xs = ['curl'];
 
   // Add method and URL all on first line

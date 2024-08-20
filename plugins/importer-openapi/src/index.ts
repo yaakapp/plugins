@@ -1,4 +1,4 @@
-import { YaakContext } from '@yaakapp/api';
+import { Context } from '@yaakapp/api';
 import { convert } from 'openapi-to-postmanv2';
 import { pluginHookImport as pluginHookImportPostman } from '../../importer-postman/src/index';
 import { Folder, HttpRequest, Workspace, Environment } from '../../../types/models';
@@ -13,7 +13,7 @@ interface ExportResources {
 }
 
 export async function pluginHookImport(
-  ctx: YaakContext,
+  ctx: Context,
   contents: string,
 ): Promise<{ resources: ExportResources } | undefined> {
   let postmanCollection;

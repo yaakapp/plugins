@@ -1,9 +1,9 @@
 import { DOMParser } from '@xmldom/xmldom';
-import { YaakContext } from '@yaakapp/api';
+import { Context } from '@yaakapp/api';
 import xpath from 'xpath';
 
 export function pluginHookResponseFilter(
-  _ctx: YaakContext,
+  _ctx: Context,
   { filter, body }: { filter: string; body: string },
 ) {
   const doc = new DOMParser().parseFromString(body, 'text/xml');

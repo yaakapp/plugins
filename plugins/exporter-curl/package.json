@@ -1,5 +1,6 @@
 {
   "name": "exporter-curl",
+  "private": true,
   "version": "0.0.1",
   "scripts": {
     "build": "yaakcli ./src/index.js"
@@ -10,6 +11,6 @@
     "vitest": "^1.4.0"
   },
   "dependencies": {
-    "@yaakapp/api": "^0.1.6"
+    "@yaakapp/api": "^0.1.9"
   }
 }

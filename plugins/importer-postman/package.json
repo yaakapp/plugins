@@ -1,12 +1,13 @@
 {
   "name": "importer-postman",
+  "private": true,
   "version": "0.0.1",
   "main": "./build/index.js",
   "scripts": {
     "build": "yaakcli ./src/index.js"
   },
   "dependencies": {
-    "@yaakapp/api": "^0.1.6"
+    "@yaakapp/api": "^0.1.9"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",

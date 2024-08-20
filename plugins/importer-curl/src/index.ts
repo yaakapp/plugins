@@ -1,4 +1,4 @@
-import { Environment, Folder, HttpRequest, HttpUrlParameter, Model, Workspace, YaakContext } from '@yaakapp/api';
+import { Environment, Folder, HttpRequest, HttpUrlParameter, Model, Workspace, Context } from '@yaakapp/api';
 import { ControlOperator, parse, ParseEntry } from 'shell-quote';
 
 type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
@@ -32,7 +32,7 @@ type Pair = string | boolean;
 
 type PairsByName = Record<string, Pair[]>;
 
-export function pluginHookImport(ctx: YaakContext, rawData: string) {
+export function pluginHookImport(ctx: Context, rawData: string) {
   if (!rawData.match(/^\s*curl /)) {
     return null;
   }

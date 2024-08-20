@@ -1,4 +1,4 @@
-import { Environment, Folder, HttpRequest, HttpRequestHeader, Model, Workspace, YaakContext } from '@yaakapp/api';
+import { Environment, Folder, HttpRequest, HttpRequestHeader, Model, Workspace, Context } from '@yaakapp/api';
 
 const POSTMAN_2_1_0_SCHEMA = 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json';
 const POSTMAN_2_0_0_SCHEMA = 'https://schema.getpostman.com/json/collection/v2.0.0/collection.json';
@@ -14,7 +14,7 @@ interface ExportResources {
 }
 
 export function pluginHookImport(
-  _ctx: YaakContext,
+  _ctx: Context,
   contents: string,
 ): { resources: ExportResources } | undefined {
   const root = parseJSONToRecord(contents);

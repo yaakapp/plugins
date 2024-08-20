@@ -1,6 +1,6 @@
-import { YaakContext } from '@yaakapp/api';
+import { Context } from '@yaakapp/api';
 
-export function pluginHookImport(_ctx: YaakContext, contents: string) {
+export function pluginHookImport(_ctx: Context, contents: string) {
   let parsed;
   try {
     parsed = JSON.parse(contents);
