@@ -1,5 +1,5 @@
 import { DOMParser } from '@xmldom/xmldom';
-import { CallTemplateFunctionArgs, Context, Plugin } from '@yaakapp/api';
+import { CallTemplateFunctionArgs, Context, HttpResponse, Plugin } from '@yaakapp/api';
 import { JSONPath } from 'jsonpath-plus';
 import { readFileSync } from 'node:fs';
 import xpath from 'xpath';
@@ -17,7 +17,7 @@ export const plugin: Plugin = {
         type: 'text',
         name: 'path',
         label: 'JSONPath or XPath',
-        placeholder: '$.books[0].id or /books[0]/id'
+        placeholder: '$.books[0].id or /books[0]/id',
       },
       {
         type: 'select',
@@ -48,9 +48,20 @@ export const plugin: Plugin = {
         return null;
       }
 
-      const response = (args.values.behavior === 'always' || responses[0] == null)
-        ? await ctx.httpRequest.send({ httpRequest: renderedHttpRequest })
-        : responses[0];
+      let response: HttpResponse | null = responses[0] ?? null;
+
+      // Previews happen a ton, and we don't want to send too many times on "always," so treat
+      // it as "smart" during preview.
+      let behavior = args.values.behavior === 'always' && args.purpose === 'preview' ? 'smart' : args.values.behavior;
+
+      // Send if no responses and "smart," or "always"
+      if ((behavior === 'smart' && response == null) || behavior === 'always') {
+        response = await ctx.httpRequest.send({ httpRequest: renderedHttpRequest });
+      }
+
+      if (response == null) {
+        return null;
+      }
 
       if (response.bodyPath == null) {
         return null;
@@ -102,7 +113,7 @@ function filterXPath(body: string, path: string): string {
   const items = xpath.select(path, doc, false);
 
   if (Array.isArray(items)) {
-    return String(items[0] ?? '');
+    return items[0] != null ? String(items[0].firstChild ?? '') : '';
   } else {
     // Not sure what cases this happens in (?)
     return String(items);

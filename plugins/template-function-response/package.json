@@ -6,7 +6,7 @@
     "build": "yaakcli src/index.ts"
   },
   "dependencies": {
-    "@yaakapp/api": "^0.1.9",
+    "@yaakapp/api": "^0.1.11",
     "jsonpath-plus": "^9.0.0",
     "xpath": "^0.0.34",
     "@xmldom/xmldom": "^0.8.10"

@@ -1,5 +1,5 @@
-const {readdirSync, readFileSync} = require('node:fs');
-const {execSync} = require('node:child_process');
+const { readdirSync, readFileSync } = require('node:fs');
+const { execSync } = require('node:child_process');
 const path = require('node:path');
 
 async function main() {
@@ -13,8 +13,8 @@ async function main() {
     const pkg = JSON.parse(readFileSync(path.join(pluginDir, 'package.json'), 'utf8'));
 
     console.log('Building plugin', pkg.name, pluginDir);
-    execSync(`npm ci`, {cwd: pluginDir});
-    execSync(`npm run build`, {cwd: pluginDir});
+    execSync(`npm install`, { cwd: pluginDir });
+    execSync(`npm run build`, { cwd: pluginDir });
   }
 }
 

@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "jsonpath-plus": "^9.0.0",
-    "@yaakapp/api": "^0.1.9"
+    "@yaakapp/api": "^0.1.11"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",
