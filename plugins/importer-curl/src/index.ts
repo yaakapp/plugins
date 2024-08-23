@@ -173,7 +173,7 @@ function importCommand(parseEntries: ParseEntry[], workspaceId: string) {
   urlParameters =
     search?.split('&').map((p) => {
       const v = splitOnce(p, '=');
-      return { name: v[0] ?? '', value: v[1] ?? '', enabled: true };
+      return { name: decodeURIComponent(v[0] ?? ''), value: decodeURIComponent(v[1] ?? ''), enabled: true };
     }) ?? [];
 
   url = baseUrl ?? urlArg;

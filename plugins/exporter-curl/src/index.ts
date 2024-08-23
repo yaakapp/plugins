@@ -8,7 +8,7 @@ export const plugin: Plugin = {
     label: 'Copy as Curl',
     icon: 'copy',
     async onSelect(ctx, args) {
-      const rendered_request = await ctx.httpRequest.render({ httpRequest: args.httpRequest });
+      const rendered_request = await ctx.httpRequest.render({ httpRequest: args.httpRequest, purpose: 'preview' });
       const data = await pluginHookExport(ctx, rendered_request);
       ctx.clipboard.copyText(data);
       ctx.toast.show({ variant: 'copied', message: 'Curl copied to clipboard' });
