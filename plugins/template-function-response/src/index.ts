@@ -27,7 +27,6 @@ export const plugin: Plugin = {
         options: [
           { name: 'When no responses', value: 'smart' },
           { name: 'Always', value: 'always' },
-          { name: 'Never', value: 'never' },
         ],
       },
     ],
@@ -40,7 +39,7 @@ export const plugin: Plugin = {
       if (httpRequest == null) {
         return null;
       }
-      const renderedHttpRequest = await ctx.httpRequest.render({ httpRequest });
+      const renderedHttpRequest = await ctx.httpRequest.render({ httpRequest, purpose: args.purpose });
 
       const responses = await ctx.httpResponse.find({ requestId: httpRequest.id, limit: 1 });
 
@@ -52,7 +51,9 @@ export const plugin: Plugin = {
 
       // Previews happen a ton, and we don't want to send too many times on "always," so treat
       // it as "smart" during preview.
-      let behavior = args.values.behavior === 'always' && args.purpose === 'preview' ? 'smart' : args.values.behavior;
+      let behavior = (args.values.behavior === 'always' && args.purpose === 'preview')
+        ? 'smart'
+        : args.values.behavior;
 
       // Send if no responses and "smart," or "always"
       if ((behavior === 'smart' && response == null) || behavior === 'always') {
