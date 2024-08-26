@@ -6,7 +6,7 @@ import xpath from 'xpath';
 
 export const plugin: Plugin = {
   templateFunctions: [{
-    name: 'Response',
+    name: 'response',
     args: [
       {
         type: 'http_request',
