@@ -3,10 +3,10 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "build": "yaakcli ./src/index.js"
+    "build": "yaakcli build ./src/index.js"
   },
   "dependencies": {
-    "@yaakapp/api": "^0.1.13",
+    "@yaakapp/api": "^0.1.14",
     "shell-quote": "^1.8.1"
   },
   "devDependencies": {

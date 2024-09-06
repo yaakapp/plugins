@@ -1,7 +1,8 @@
 import { describe, expect, test } from 'vitest';
+import { Context } from '@yaakapp/api';
 import { pluginHookExport } from '../src';
 
-const ctx = {};
+const ctx = {} as Context;
 
 describe('exporter-curl', () => {
   test('Exports GET with params', () => {
