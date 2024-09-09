@@ -1,7 +1,8 @@
+import { Context } from '@yaakapp/api';
 import { describe, expect, test } from 'vitest';
 import { pluginHookImport } from '../src';
 
-const ctx = {};
+const ctx = {} as Context;
 
 describe('importer-yaak', () => {
   test('Skips invalid imports', () => {

@@ -1,29 +1,19 @@
+import { Context, Model } from '@yaakapp/api';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { Model } from '../../../src-web/lib/models';
+import { describe, expect, test } from 'vitest';
 import { pluginHookImport } from '../src';
 
-let originalRandom = Math.random;
+const ctx = {} as Context;
 
 describe('importer-postman', () => {
-  beforeEach(() => {
-    let i = 0;
-    // Psuedo-random number generator to ensure consistent ID generation
-    Math.random = vi.fn(() => ((i++ * 1000) % 133) / 100);
-  });
-
-  afterEach(() => {
-    Math.random = originalRandom;
-  });
-
   const p = path.join(__dirname, 'fixtures');
   const fixtures = fs.readdirSync(p);
 
   for (const fixture of fixtures) {
     test('Imports ' + fixture, () => {
       const contents = fs.readFileSync(path.join(p, fixture), 'utf-8');
-      const imported = pluginHookImport({}, contents);
+      const imported = pluginHookImport(ctx, contents);
       const folder0 = newId('folder');
       const folder1 = newId('folder');
       expect(imported).toEqual({
