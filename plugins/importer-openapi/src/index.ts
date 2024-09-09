@@ -32,7 +32,5 @@ export async function pluginHookImport(
     return undefined;
   }
 
-  // console.log("HELLO", JSON.stringify(postmanCollection, null, 1));
-
   return pluginHookImportPostman(ctx, JSON.stringify(postmanCollection));
 }
