@@ -1,0 +1,27 @@
+name: CI
+on: push
+
+jobs:
+  do-it:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'macos-latest'
+          - platform: 'ubuntu-22.04'
+          - platform: 'windows-latest'
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout yaakapp/app
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Yaak CLI
+        run: npm install -g @yaakapp/cli
+
+      - name: Verify the Yaak CLI
+        run: yaakcli.exe --version
