@@ -1,0 +1,41 @@
+name: Release
+
+on: push
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    name: CI
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+
+      - run: npm install
+
+      - run: npm test
+        working-directory: npm/cli-darwin-arm64
+        env: { NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}" }
+
+      - name: Publish @yaakapp/cli-darwin-x64
+        run: npm publish --provenance --access public
+        working-directory: npm/cli-darwin-x64
+        env: { NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}" }
+
+      - name: Publish @yaakapp/cli-linux-x64
+        run: npm publish --provenance --access public
+        working-directory: npm/cli-linux-x64
+        env: { NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}" }
+
+      - name: Publish @yaakapp/cli-win32-x64
+        run: npm publish --provenance --access public
+        working-directory: npm/cli-win32-x64
+        env: { NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}" }
+
+      - name: Publish @yaakapp/cli
+        run: npm publish --provenance --access public
+        working-directory: npm/cli
+        env: { NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}" }

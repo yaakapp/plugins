@@ -1,8 +1,8 @@
+import { Context, HttpRequest, Model, Workspace } from '@yaakapp/api';
 import { describe, expect, test } from 'vitest';
-import { HttpRequest, Model, Workspace } from '../../../src-web/lib/models';
 import { pluginHookImport } from '../src';
 
-const ctx = {};
+const ctx = {} as Context;
 
 describe('importer-curl', () => {
   test('Imports basic GET', () => {
@@ -298,7 +298,7 @@ describe('importer-curl', () => {
             url: 'https://yaak.app',
             urlParameters: [
               { name: 'foo', value: 'bar', enabled: true },
-              { name: 'baz', value: 'a%20a', enabled: true },
+              { name: 'baz', value: 'a a', enabled: true },
             ],
           }),
         ],

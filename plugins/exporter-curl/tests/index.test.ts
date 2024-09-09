@@ -5,9 +5,9 @@ import { pluginHookExport } from '../src';
 const ctx = {} as Context;
 
 describe('exporter-curl', () => {
-  test('Exports GET with params', () => {
+  test('Exports GET with params', async () => {
     expect(
-      pluginHookExport(ctx, {
+      await pluginHookExport(ctx, {
         url: 'https://yaak.app',
         urlParameters: [
           { name: 'a', value: 'aaa' },
@@ -19,9 +19,9 @@ describe('exporter-curl', () => {
       [`curl 'https://yaak.app'`, `--url-query 'a=aaa'`, `--url-query 'b=bbb'`].join(` \\\n  `),
     );
   });
-  test('Exports POST with url form data', () => {
+  test('Exports POST with url form data', async () => {
     expect(
-      pluginHookExport(ctx, {
+      await pluginHookExport(ctx, {
         url: 'https://yaak.app',
         method: 'POST',
         bodyType: 'application/x-www-form-urlencoded',
@@ -38,9 +38,9 @@ describe('exporter-curl', () => {
     );
   });
 
-  test('Exports PUT with multipart form', () => {
+  test('Exports PUT with multipart form', async () => {
     expect(
-      pluginHookExport(ctx, {
+      await pluginHookExport(ctx, {
         url: 'https://yaak.app',
         method: 'PUT',
         bodyType: 'multipart/form-data',
@@ -63,9 +63,9 @@ describe('exporter-curl', () => {
     );
   });
 
-  test('Exports JSON body', () => {
+  test('Exports JSON body', async () => {
     expect(
-      pluginHookExport(ctx, {
+      await pluginHookExport(ctx, {
         url: 'https://yaak.app',
         method: 'POST',
         bodyType: 'application/json',
@@ -83,9 +83,9 @@ describe('exporter-curl', () => {
     );
   });
 
-  test('Exports multi-line JSON body', () => {
+  test('Exports multi-line JSON body', async () => {
     expect(
-      pluginHookExport(ctx, {
+      await pluginHookExport(ctx, {
         url: 'https://yaak.app',
         method: 'POST',
         bodyType: 'application/json',
@@ -103,9 +103,9 @@ describe('exporter-curl', () => {
     );
   });
 
-  test('Exports headers', () => {
+  test('Exports headers', async () => {
     expect(
-      pluginHookExport(ctx, {
+      await pluginHookExport(ctx, {
         headers: [
           { name: 'a', value: 'aaa' },
           { name: 'b', value: 'bbb', enabled: true },
@@ -115,9 +115,9 @@ describe('exporter-curl', () => {
     ).toEqual([`curl`, `--header 'a: aaa'`, `--header 'b: bbb'`].join(` \\\n  `));
   });
 
-  test('Basic auth', () => {
+  test('Basic auth', async () => {
     expect(
-      pluginHookExport(ctx, {
+      await pluginHookExport(ctx, {
         url: 'https://yaak.app',
         authenticationType: 'basic',
         authentication: {
@@ -128,9 +128,9 @@ describe('exporter-curl', () => {
     ).toEqual([`curl 'https://yaak.app'`, `--user 'user:pass'`].join(` \\\n  `));
   });
 
-  test('Broken basic auth', () => {
+  test('Broken basic auth', async () => {
     expect(
-      pluginHookExport(ctx, {
+      await pluginHookExport(ctx, {
         url: 'https://yaak.app',
         authenticationType: 'basic',
         authentication: {},
@@ -138,9 +138,9 @@ describe('exporter-curl', () => {
     ).toEqual([`curl 'https://yaak.app'`, `--user ':'`].join(` \\\n  `));
   });
 
-  test('Digest auth', () => {
+  test('Digest auth', async () => {
     expect(
-      pluginHookExport(ctx, {
+      await pluginHookExport(ctx, {
         url: 'https://yaak.app',
         authenticationType: 'digest',
         authentication: {
@@ -151,9 +151,9 @@ describe('exporter-curl', () => {
     ).toEqual([`curl 'https://yaak.app'`, `--digest --user 'user:pass'`].join(` \\\n  `));
   });
 
-  test('Bearer auth', () => {
+  test('Bearer auth', async () => {
     expect(
-      pluginHookExport(ctx, {
+      await pluginHookExport(ctx, {
         url: 'https://yaak.app',
         authenticationType: 'bearer',
         authentication: {
@@ -163,9 +163,9 @@ describe('exporter-curl', () => {
     ).toEqual([`curl 'https://yaak.app'`, `--header 'Authorization: Bearer tok'`].join(` \\\n  `));
   });
 
-  test('Broken bearer auth', () => {
+  test('Broken bearer auth', async () => {
     expect(
-      pluginHookExport(ctx, {
+      await pluginHookExport(ctx, {
         url: 'https://yaak.app',
         authenticationType: 'bearer',
         authentication: {

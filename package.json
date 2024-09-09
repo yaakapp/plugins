@@ -3,7 +3,8 @@
   "repository": "https://github.com/yaakapp/plugins",
   "private": true,
   "scripts": {
-    "build": "node scripts/build-plugins.cjs"
+    "build": "node scripts/build-plugins.cjs",
+    "test": "vitest run"
   },
   "devDependencies": {
     "jsonpath": "^1.1.1",
