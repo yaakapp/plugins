@@ -11,6 +11,7 @@
     "xpath": "^0.0.34"
   },
   "devDependencies": {
+    "@yaakapp/cli": "^0.0.42",
     "@types/node": "^20.14.9",
     "typescript": "^5.5.2"
   }

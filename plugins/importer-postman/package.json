@@ -10,6 +10,7 @@
     "@yaakapp/api": "^0.1.14"
   },
   "devDependencies": {
+    "@yaakapp/cli": "^0.0.42",
     "@types/node": "^20.14.9",
     "esbuild": "^0.21.5",
     "typescript": "^5.5.2",

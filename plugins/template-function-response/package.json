@@ -12,6 +12,7 @@
     "@xmldom/xmldom": "^0.8.10"
   },
   "devDependencies": {
+    "@yaakapp/cli": "^0.0.42",
     "@types/jsonpath": "^0.2.4",
     "@types/node": "^20.14.9",
     "typescript": "^5.5.2",

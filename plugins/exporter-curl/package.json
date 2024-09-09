@@ -5,12 +5,13 @@
   "scripts": {
     "build": "yaakcli build ./src/index.js"
   },
+  "dependencies": {
+    "@yaakapp/api": "^0.1.14"
+  },
   "devDependencies": {
     "@types/node": "^20.14.9",
     "typescript": "^5.5.2",
-    "vitest": "^1.4.0"
-  },
-  "dependencies": {
-    "@yaakapp/api": "^0.1.14"
+    "vitest": "^1.4.0",
+    "@yaakapp/cli": "^0.0.42"
   }
 }
