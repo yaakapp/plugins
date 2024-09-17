@@ -1,4 +1,13 @@
-import { Environment, Folder, HttpRequest, HttpRequestHeader, Model, Workspace, Context } from '@yaakapp/api';
+import {
+  Environment,
+  Folder,
+  HttpRequest,
+  HttpRequestHeader,
+  Model,
+  Workspace,
+  Context,
+  HttpUrlParameter,
+} from '@yaakapp/api';
 
 const POSTMAN_2_1_0_SCHEMA = 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json';
 const POSTMAN_2_0_0_SCHEMA = 'https://schema.getpostman.com/json/collection/v2.0.0/collection.json';
@@ -84,6 +93,8 @@ export function pluginHookImport(
         headers.push(bodyPatchHeader);
       }
 
+      const { url, urlParameters } = convertUrl(r.url);
+
       const request: ExportResources['httpRequests'][0] = {
         model: 'http_request',
         id: generateId('http_request'),
@@ -91,7 +102,8 @@ export function pluginHookImport(
         folderId,
         name: v.name,
         method: r.method || 'GET',
-        url: typeof r.url === 'string' ? r.url : convertUrl(toRecord(r.url)),
+        url,
+        urlParameters,
         body: bodyPatch.body,
         bodyType: bodyPatch.bodyType,
         authentication: authPatch.authentication,
@@ -111,10 +123,12 @@ export function pluginHookImport(
   return { resources: convertTemplateSyntax(exportResources) };
 }
 
-function convertUrl(url: Record<string, any>) {
-  if ('raw' in url) {
-    return url.raw;
+function convertUrl(url: string | any): Pick<HttpRequest, 'url' | 'urlParameters'> {
+  if (typeof url === 'string') {
+    return { url, urlParameters: [] };
   }
+
+  url = toRecord(url);
 
   let v = '';
 
@@ -134,9 +148,25 @@ function convertUrl(url: Record<string, any>) {
     v += `/${Array.isArray(url.path) ? url.path.join('/') : url.path}`;
   }
 
+  const params: HttpUrlParameter[] = [];
   if ('query' in url && Array.isArray(url.query) && url.query.length > 0) {
-    const qs = url.query.map(q => `${q.key ?? ''}=${q.value ?? ''}`).join('&');
-    v += `?${qs}`;
+    for (const query of url.query) {
+      params.push({
+        name: query.key ?? '',
+        value: query.value ?? '',
+        enabled: !query.disabled,
+      });
+    }
+  }
+
+  if ('variable' in url && Array.isArray(url.variable) && url.variable.length > 0) {
+    for (const v of url.variable) {
+      params.push({
+        name: ':' + (v.key ?? ''),
+        value: v.value ?? '',
+        enabled: !v.disabled,
+      });
+    }
   }
 
   if ('hash' in url && typeof url.hash === 'string') {
@@ -145,7 +175,7 @@ function convertUrl(url: Record<string, any>) {
 
   // TODO: Implement url.variables (path variables)
 
-  return v;
+  return { url: v, urlParameters: params };
 }
 
 function importAuth(

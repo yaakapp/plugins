@@ -1,4 +1,4 @@
-import { Context, Model } from '@yaakapp/api';
+import { Context } from '@yaakapp/api';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { describe, expect, test } from 'vitest';
@@ -11,71 +11,16 @@ describe('importer-postman', () => {
   const fixtures = fs.readdirSync(p);
 
   for (const fixture of fixtures) {
+    if (fixture.includes('.output')) {
+      continue;
+    }
+
     test('Imports ' + fixture, () => {
       const contents = fs.readFileSync(path.join(p, fixture), 'utf-8');
-      const imported = pluginHookImport(ctx, contents);
-      const folder0 = newId('folder');
-      const folder1 = newId('folder');
-      expect(imported).toEqual({
-        resources: expect.objectContaining({
-          workspaces: [
-            expect.objectContaining({
-              id: newId('workspace'),
-              model: 'workspace',
-              name: 'New Collection',
-            }),
-          ],
-          folders: expect.arrayContaining([
-            expect.objectContaining({
-              id: folder0,
-              model: 'folder',
-              workspaceId: existingId('workspace'),
-              name: 'Top Folder',
-            }),
-            expect.objectContaining({
-              folderId: folder0,
-              id: folder1,
-              model: 'folder',
-              workspaceId: existingId('workspace'),
-              name: 'Nested Folder',
-            }),
-          ]),
-          httpRequests: expect.arrayContaining([
-            expect.objectContaining({
-              id: newId('http_request'),
-              model: 'http_request',
-              name: 'Request 1',
-              workspaceId: existingId('workspace'),
-              folderId: folder1,
-            }),
-            expect.objectContaining({
-              id: newId('http_request'),
-              model: 'http_request',
-              name: 'Request 2',
-              workspaceId: existingId('workspace'),
-              folderId: folder0,
-            }),
-            expect.objectContaining({
-              id: newId('http_request'),
-              model: 'http_request',
-              name: 'Request 3',
-              workspaceId: existingId('workspace'),
-              folderId: null,
-            }),
-          ]),
-        }),
-      });
+      const expected = fs.readFileSync(path.join(p, fixture.replace('.input', '.output')), 'utf-8');
+      const result = pluginHookImport(ctx, contents);
+      // console.log(JSON.stringify(result, null, 2))
+      expect(result).toEqual(JSON.parse(expected));
     });
   }
 });
-
-const idCount: Partial<Record<Model['model'], number>> = {};
-
-function newId(model: Model['model']): string {
-  idCount[model] = (idCount[model] ?? -1) + 1;
-  return `GENERATE_ID::${model.toUpperCase()}_${idCount[model]}`;
-}
-
-function existingId(model: Model['model']): string {
-  return `GENERATE_ID::${model.toUpperCase()}_${idCount[model] ?? 0}`;
-}
