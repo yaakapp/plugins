@@ -1,10 +1,10 @@
 import { DOMParser } from '@xmldom/xmldom';
-import { CallTemplateFunctionArgs, Context, HttpResponse, Plugin } from '@yaakapp/api';
+import { CallTemplateFunctionArgs, Context, HttpResponse, PluginDefinition } from '@yaakapp/api';
 import { JSONPath } from 'jsonpath-plus';
 import { readFileSync } from 'node:fs';
 import xpath from 'xpath';
 
-export const plugin: Plugin = {
+export const plugin: PluginDefinition = {
   templateFunctions: [{
     name: 'response',
     args: [

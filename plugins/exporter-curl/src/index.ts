@@ -1,8 +1,8 @@
-import { Context, HttpRequest, Plugin } from '@yaakapp/api';
+import { Context, HttpRequest, PluginDefinition } from '@yaakapp/api';
 
 const NEWLINE = '\\\n ';
 
-export const plugin: Plugin = {
+export const plugin: PluginDefinition = {
   httpRequestActions: [{
     key: 'export-curl',
     label: 'Copy as Curl',
@@ -11,7 +11,7 @@ export const plugin: Plugin = {
       const rendered_request = await ctx.httpRequest.render({ httpRequest: args.httpRequest, purpose: 'preview' });
       const data = await pluginHookExport(ctx, rendered_request);
       ctx.clipboard.copyText(data);
-      ctx.toast.show({ variant: 'copied', message: 'Curl copied to clipboard' });
+      ctx.toast.show({ message: 'Curl copied to clipboard', icon: 'copy' });
     },
   }],
 };
