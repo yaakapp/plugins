@@ -1,4 +1,4 @@
-import { Context, HttpRequest, Model, Workspace } from '@yaakapp/api';
+import { Context, HttpRequest, Workspace } from '@yaakapp/api';
 import { describe, expect, test } from 'vitest';
 import { pluginHookImport } from '../src';
 
@@ -307,7 +307,7 @@ describe('importer-curl', () => {
   });
 });
 
-const idCount: Partial<Record<Model['model'], number>> = {};
+const idCount: Partial<Record<string, number>> = {};
 
 function baseRequest(mergeWith: Partial<HttpRequest>) {
   idCount.http_request = (idCount.http_request ?? -1) + 1;

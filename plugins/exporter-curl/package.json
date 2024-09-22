@@ -6,7 +6,7 @@
     "build": "yaakcli build ./src/index.js"
   },
   "dependencies": {
-    "@yaakapp/api": "^0.2.5"
+    "@yaakapp/api": "^0.2.7"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",

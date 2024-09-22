@@ -1,12 +1,11 @@
 import {
+  Context,
   Environment,
   Folder,
   HttpRequest,
   HttpRequestHeader,
-  Model,
-  Workspace,
-  Context,
   HttpUrlParameter,
+  Workspace,
 } from '@yaakapp/api';
 
 const POSTMAN_2_1_0_SCHEMA = 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json';
@@ -327,9 +326,9 @@ function convertTemplateSyntax<T>(obj: T): T {
   }
 }
 
-const idCount: Partial<Record<Model['model'], number>> = {};
+const idCount: Partial<Record<string, number>> = {};
 
-function generateId(model: Model['model']): string {
+function generateId(model: string): string {
   idCount[model] = (idCount[model] ?? -1) + 1;
   return `GENERATE_ID::${model.toUpperCase()}_${idCount[model]}`;
 }

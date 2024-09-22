@@ -1,4 +1,4 @@
-import { Environment, Folder, HttpRequest, HttpUrlParameter, Model, Workspace, Context } from '@yaakapp/api';
+import { Context, Environment, Folder, HttpRequest, HttpUrlParameter, Workspace } from '@yaakapp/api';
 import { ControlOperator, parse, ParseEntry } from 'shell-quote';
 
 type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
@@ -405,9 +405,9 @@ function splitOnce(str: string, sep: string): string[] {
   return [str];
 }
 
-const idCount: Partial<Record<Model['model'], number>> = {};
+const idCount: Partial<Record<string, number>> = {};
 
-function generateId(model: Model['model']): string {
+function generateId(model: string): string {
   idCount[model] = (idCount[model] ?? -1) + 1;
   return `GENERATE_ID::${model.toUpperCase()}_${idCount[model]}`;
 }
