@@ -1,96 +1,115 @@
 import { DOMParser } from '@xmldom/xmldom';
-import { CallTemplateFunctionArgs, Context, HttpResponse, PluginDefinition } from '@yaakapp/api';
+import { CallTemplateFunctionArgs, Context, HttpResponse, PluginDefinition, RenderPurpose } from '@yaakapp/api';
 import { JSONPath } from 'jsonpath-plus';
 import { readFileSync } from 'node:fs';
 import xpath from 'xpath';
 
 export const plugin: PluginDefinition = {
-  templateFunctions: [{
-    name: 'response',
-    args: [
-      {
-        type: 'http_request',
-        name: 'request',
-        label: 'Request',
+  templateFunctions: [
+    {
+      name: 'response.header',
+      args: [
+        {
+          type: 'http_request',
+          name: 'request',
+          label: 'Request',
+        },
+        {
+          type: 'text',
+          name: 'header',
+          label: 'Header Name',
+          placeholder: 'Content-Type',
+        },
+        {
+          type: 'select',
+          name: 'behavior',
+          label: 'Sending Behavior',
+          defaultValue: 'smart',
+          options: [
+            { name: 'When no responses', value: 'smart' },
+            { name: 'Always', value: 'always' },
+          ],
+        },
+      ],
+      async onRender(ctx: Context, args: CallTemplateFunctionArgs): Promise<string | null> {
+        if (!args.values.request || !args.values.header) return null;
+
+        const response = await getResponse(ctx, {
+          requestId: args.values.request,
+          purpose: args.purpose,
+          behavior: args.values.behavior ?? null,
+        });
+        if (response == null) return null;
+
+        const header = response.headers.find(
+          h => h.name.toLowerCase() === String(args.values.header ?? '').toLowerCase(),
+        );
+        return header?.value ?? null;
       },
-      {
-        type: 'text',
-        name: 'path',
-        label: 'JSONPath or XPath',
-        placeholder: '$.books[0].id or /books[0]/id',
-      },
-      {
-        type: 'select',
-        name: 'behavior',
-        label: 'Sending Behavior',
-        defaultValue: 'smart',
-        options: [
-          { name: 'When no responses', value: 'smart' },
-          { name: 'Always', value: 'always' },
-        ],
-      },
-    ],
-    async onRender(ctx: Context, args: CallTemplateFunctionArgs): Promise<string | null> {
-      if (!args.values.request || !args.values.path) {
-        return null;
-      }
-
-      const httpRequest = await ctx.httpRequest.getById({ id: args.values.request ?? 'n/a' });
-      if (httpRequest == null) {
-        return null;
-      }
-
-      const responses = await ctx.httpResponse.find({ requestId: httpRequest.id, limit: 1 });
-
-      if (args.values.behavior === 'never' && responses.length === 0) {
-        return null;
-      }
-
-      let response: HttpResponse | null = responses[0] ?? null;
-
-      // Previews happen a ton, and we don't want to send too many times on "always," so treat
-      // it as "smart" during preview.
-      let behavior = (args.values.behavior === 'always' && args.purpose === 'preview')
-        ? 'smart'
-        : args.values.behavior;
-
-      // Send if no responses and "smart," or "always"
-      if ((behavior === 'smart' && response == null) || behavior === 'always') {
-        // NOTE: Render inside this conditional, or we'll get infinite recursion (render->render->...)
-        const renderedHttpRequest = await ctx.httpRequest.render({ httpRequest, purpose: args.purpose });
-        response = await ctx.httpRequest.send({ httpRequest: renderedHttpRequest });
-      }
-
-      if (response == null) {
-        return null;
-      }
-
-      if (response.bodyPath == null) {
-        return null;
-      }
-
-      let body;
-      try {
-        body = readFileSync(response.bodyPath, 'utf-8');
-      } catch (_) {
-        return null;
-      }
-
-      try {
-        return filterJSONPath(body, args.values.path);
-      } catch (err) {
-        // Probably not JSON, try XPath
-      }
-
-      try {
-        return filterXPath(body, args.values.path);
-      } catch (err) {
-        // Probably not XML
-      }
-
-      return null; // Bail out
     },
-  }],
+    {
+      name: 'response.body.path',
+      aliases: ['response'],
+      args: [
+        {
+          type: 'http_request',
+          name: 'request',
+          label: 'Request',
+        },
+        {
+          type: 'text',
+          name: 'path',
+          label: 'JSONPath or XPath',
+          placeholder: '$.books[0].id or /books[0]/id',
+        },
+        {
+          type: 'select',
+          name: 'behavior',
+          label: 'Sending Behavior',
+          defaultValue: 'smart',
+          options: [
+            { name: 'When no responses', value: 'smart' },
+            { name: 'Always', value: 'always' },
+          ],
+        },
+      ],
+      async onRender(ctx: Context, args: CallTemplateFunctionArgs): Promise<string | null> {
+        if (!args.values.request || !args.values.path) return null;
+
+        const response = await getResponse(ctx, {
+          requestId: args.values.request,
+          purpose: args.purpose,
+          behavior: args.values.behavior ?? null,
+        });
+        if (response == null) return null;
+
+        if (response.bodyPath == null) {
+          return null;
+        }
+
+        let body;
+        try {
+          body = readFileSync(response.bodyPath, 'utf-8');
+        } catch (_) {
+          return null;
+        }
+
+        try {
+          return filterJSONPath(body, args.values.path);
+        } catch (err) {
+          // Probably not JSON, try XPath
+        }
+
+        try {
+          return filterXPath(body, args.values.path);
+        } catch (err) {
+          // Probably not XML
+        }
+
+        return null; // Bail out
+      },
+    },
+  ],
 };
 
 function filterJSONPath(body: string, path: string): string {
@@ -120,4 +139,40 @@ function filterXPath(body: string, path: string): string {
     // Not sure what cases this happens in (?)
     return String(items);
   }
+}
+
+async function getResponse(ctx: Context, { requestId, behavior, purpose }: {
+  requestId: string,
+  behavior: string | null,
+  purpose: RenderPurpose,
+}): Promise<HttpResponse | null> {
+  if (!requestId) return null;
+
+  const httpRequest = await ctx.httpRequest.getById({ id: requestId ?? 'n/a' });
+  if (httpRequest == null) {
+    return null;
+  }
+
+  const responses = await ctx.httpResponse.find({ requestId: httpRequest.id, limit: 1 });
+
+  if (behavior === 'never' && responses.length === 0) {
+    return null;
+  }
+
+  let response: HttpResponse | null = responses[0] ?? null;
+
+  // Previews happen a ton, and we don't want to send too many times on "always," so treat
+  // it as "smart" during preview.
+  let finalBehavior = (behavior === 'always' && purpose === 'preview')
+    ? 'smart'
+    : behavior;
+
+  // Send if no responses and "smart," or "always"
+  if ((finalBehavior === 'smart' && response == null) || finalBehavior === 'always') {
+    // NOTE: Render inside this conditional, or we'll get infinite recursion (render->render->...)
+    const renderedHttpRequest = await ctx.httpRequest.render({ httpRequest, purpose });
+    response = await ctx.httpRequest.send({ httpRequest: renderedHttpRequest });
+  }
+
+  return response;
 }

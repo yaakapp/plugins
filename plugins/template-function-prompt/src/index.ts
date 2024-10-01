@@ -1,0 +1,24 @@
+import { CallTemplateFunctionArgs, Context, PluginDefinition, ShowPromptRequest } from '@yaakapp/api';
+
+export const plugin: PluginDefinition = {
+  templateFunctions: [{
+    name: 'prompt.text',
+    args: [
+      { type: 'text', name: 'title', label: 'Title' },
+      { type: 'text', name: 'label', label: 'Label', optional: true },
+      { type: 'text', name: 'defaultValue', label: 'Default Value', optional: true },
+      { type: 'text', name: 'placeholder', label: 'Placeholder', optional: true },
+    ],
+    async onRender(ctx: Context, args: CallTemplateFunctionArgs): Promise<string | null> {
+      if (args.purpose !== 'send') return null;
+
+      return await ctx.prompt.show({
+        id: `prompt-${args.values.label}`,
+        label: args.values.label,
+        title: args.values.title,
+        defaultValue: args.values.defaultValue,
+        placeholder: args.values.placeholder,
+      } as ShowPromptRequest);
+    },
+  }],
+};
