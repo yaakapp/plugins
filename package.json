@@ -1,15 +1,24 @@
 {
   "name": "@yaakapp/plugins",
   "repository": "https://github.com/yaakapp/plugins",
+  "workspaces": [
+    "plugins/*"
+  ],
   "private": true,
   "scripts": {
-    "build": "node scripts/build-plugins.cjs",
+    "build": "workspaces-run --parallel -- npm run --workspaces build",
+    "dev": "workspaces-run --parallel -- npm run --workspaces dev",
     "test": "vitest run",
     "lint": "tsc"
   },
   "devDependencies": {
+    "@types/node": "^22.7.4",
     "jsonpath": "^1.1.1",
+    "typescript": "^5.6.2",
     "vitest": "^2.0.4",
-    "typescript": "^5.5.2"
+    "workspaces-run": "^1.0.2"
+  },
+  "dependencies": {
+    "@yaakapp/api": "^0.2.9"
   }
 }

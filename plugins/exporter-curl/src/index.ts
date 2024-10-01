@@ -23,6 +23,7 @@ export async function pluginHookExport(_ctx: Context, request: Partial<HttpReque
   if (request.method) xs.push('-X', request.method);
   if (request.url) xs.push(quote(request.url));
 
+
   xs.push(NEWLINE);
 
   // Add URL params
