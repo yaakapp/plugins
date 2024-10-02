@@ -12,6 +12,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
 
+      - name: Install @yaakapp/cli
+        run: npm install -g @yaakapp/cli
+
       - name: Install Dependencies
         run: npm install
 
