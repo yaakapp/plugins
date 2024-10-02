@@ -1,35 +1,47 @@
 import { DOMParser } from '@xmldom/xmldom';
-import { CallTemplateFunctionArgs, Context, HttpResponse, PluginDefinition, RenderPurpose } from '@yaakapp/api';
+import {
+  CallTemplateFunctionArgs,
+  Context,
+  HttpResponse,
+  PluginDefinition,
+  RenderPurpose,
+  TemplateFunctionArg,
+} from '@yaakapp/api';
 import { JSONPath } from 'jsonpath-plus';
 import { readFileSync } from 'node:fs';
 import xpath from 'xpath';
+
+const behaviorArg: TemplateFunctionArg = {
+  type: 'select',
+  name: 'behavior',
+  label: 'Sending Behavior',
+  defaultValue: 'smart',
+  options: [
+    { label: 'When no responses', value: 'smart' },
+    { label: 'Always', value: 'always' },
+  ],
+};
+
+const requestArg: TemplateFunctionArg =
+  {
+    type: 'http_request',
+    name: 'request',
+    label: 'Request',
+  };
 
 export const plugin: PluginDefinition = {
   templateFunctions: [
     {
       name: 'response.header',
       args: [
-        {
-          type: 'http_request',
-          name: 'request',
-          label: 'Request',
-        },
+        requestArg,
         {
           type: 'text',
           name: 'header',
           label: 'Header Name',
           placeholder: 'Content-Type',
         },
-        {
-          type: 'select',
-          name: 'behavior',
-          label: 'Sending Behavior',
-          defaultValue: 'smart',
-          options: [
-            { name: 'When no responses', value: 'smart' },
-            { name: 'Always', value: 'always' },
-          ],
-        },
+        behaviorArg,
       ],
       async onRender(ctx: Context, args: CallTemplateFunctionArgs): Promise<string | null> {
         if (!args.values.request || !args.values.header) return null;
@@ -51,27 +63,14 @@ export const plugin: PluginDefinition = {
       name: 'response.body.path',
       aliases: ['response'],
       args: [
-        {
-          type: 'http_request',
-          name: 'request',
-          label: 'Request',
-        },
+        requestArg,
         {
           type: 'text',
           name: 'path',
           label: 'JSONPath or XPath',
           placeholder: '$.books[0].id or /books[0]/id',
         },
-        {
-          type: 'select',
-          name: 'behavior',
-          label: 'Sending Behavior',
-          defaultValue: 'smart',
-          options: [
-            { name: 'When no responses', value: 'smart' },
-            { name: 'Always', value: 'always' },
-          ],
-        },
+        behaviorArg,
       ],
       async onRender(ctx: Context, args: CallTemplateFunctionArgs): Promise<string | null> {
         if (!args.values.request || !args.values.path) return null;

@@ -1,4 +1,4 @@
-import { CallTemplateFunctionArgs, Context, PluginDefinition, ShowPromptRequest } from '@yaakapp/api';
+import { CallTemplateFunctionArgs, Context, PluginDefinition } from '@yaakapp/api';
 
 export const plugin: PluginDefinition = {
   templateFunctions: [{
@@ -12,13 +12,13 @@ export const plugin: PluginDefinition = {
     async onRender(ctx: Context, args: CallTemplateFunctionArgs): Promise<string | null> {
       if (args.purpose !== 'send') return null;
 
-      return await ctx.prompt.show({
+      return await ctx.prompt.text({
         id: `prompt-${args.values.label}`,
-        label: args.values.label,
-        title: args.values.title,
+        label: args.values.label ?? '',
+        title: args.values.title ?? '',
         defaultValue: args.values.defaultValue,
         placeholder: args.values.placeholder,
-      } as ShowPromptRequest);
+      });
     },
   }],
 };
