@@ -27,12 +27,13 @@ const SUPPORTED_ARGS = [
   ['request', 'X'], // Request method
   DATA_FLAGS,
 ].flatMap((v) => v);
+const BOOL_FLAGS = ['G', 'get', 'digest'];
 
 type Pair = string | boolean;
 
 type PairsByName = Record<string, Pair[]>;
 
-export function pluginHookImport(ctx: Context, rawData: string) {
+export function pluginHookImport(_ctx: Context, rawData: string) {
   if (!rawData.match(/^\s*curl /)) {
     return null;
   }
@@ -140,11 +141,12 @@ function importCommand(parseEntries: ParseEntry[], workspaceId: string) {
 
       let value;
       const nextEntry = parseEntries[i + 1];
+      const hasValue = !BOOL_FLAGS.includes(name);
       if (isSingleDash && name.length > 1) {
         // Handle squished arguments like -XPOST
         value = name.slice(1);
         name = name.slice(0, 1);
-      } else if (typeof nextEntry === 'string' && !nextEntry.startsWith('-')) {
+      } else if (typeof nextEntry === 'string' && hasValue && !nextEntry.startsWith('-')) {
         // Next arg is not a flag, so assign it as the value
         value = nextEntry;
         i++; // Skip next one

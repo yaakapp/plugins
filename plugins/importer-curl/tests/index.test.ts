@@ -196,6 +196,27 @@ describe('importer-curl', () => {
     });
   });
 
+  test('Imports post data into URL', () => {
+    expect(
+      pluginHookImport(ctx, 'curl -G https://api.stripe.com/v1/payment_links -d limit=3'),
+    ).toEqual({
+      resources: {
+        workspaces: [baseWorkspace()],
+        httpRequests: [
+          baseRequest({
+            method: 'GET',
+            url: 'https://api.stripe.com/v1/payment_links',
+            urlParameters: [{
+              enabled: true,
+              name: 'limit',
+              value: '3',
+            }]
+          }),
+        ],
+      },
+    });
+  });
+
   test('Imports multi-line JSON', () => {
     expect(
       pluginHookImport(
