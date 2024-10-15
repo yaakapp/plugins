@@ -1,5 +1,5 @@
 {
-  "name": "@yaakapp/template-function-file",
+  "name": "@yaakapp/template-function-fs",
   "private": true,
   "version": "0.0.1",
   "scripts": {
