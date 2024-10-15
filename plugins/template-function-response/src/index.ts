@@ -33,6 +33,7 @@ export const plugin: PluginDefinition = {
   templateFunctions: [
     {
       name: 'response.header',
+      description: 'Read the value of a response header, by name',
       args: [
         requestArg,
         {
