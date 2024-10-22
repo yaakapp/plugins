@@ -51,9 +51,12 @@ export async function pluginHookExport(_ctx: Context, request: Partial<HttpReque
       }
       xs.push(NEWLINE);
     }
+  } else if (typeof request.body?.query === 'string') {
+    const body = { query: request.body.query, variables: request.body.variables ?? undefined };
+    xs.push('--data-raw', `${quote(JSON.stringify(body))}`);
+    xs.push(NEWLINE);
   } else if (typeof request.body?.text === 'string') {
-    // --data-raw $'...' to do special ANSI C quoting
-    xs.push('--data-raw', `$${quote(request.body.text)}`);
+    xs.push('--data-raw', `${quote(request.body.text)}`);
     xs.push(NEWLINE);
   }
 
