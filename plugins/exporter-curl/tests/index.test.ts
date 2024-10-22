@@ -54,6 +54,21 @@ describe('exporter-curl', () => {
     );
   });
 
+  test('Exports POST with GraphQL data no variables', async () => {
+    expect(
+      await pluginHookExport(ctx, {
+        url: 'https://yaak.app',
+        method: 'POST',
+        bodyType: 'graphql',
+        body: {
+          query : '{foo,bar}',
+        },
+      }),
+    ).toEqual(
+      [`curl -X POST 'https://yaak.app'`, `--data-raw '{"query":"{foo,bar}"}'`].join(` \\\n  `),
+    );
+  });
+
   test('Exports PUT with multipart form', async () => {
     expect(
       await pluginHookExport(ctx, {
