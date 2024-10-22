@@ -46,7 +46,7 @@ describe('exporter-curl', () => {
         bodyType: 'graphql',
         body: {
           query : '{foo,bar}',
-          variables: {a: 'aaa', b: 'bbb'},
+          variables: '{"a": "aaa", "b": "bbb"}',
         },
       }),
     ).toEqual(

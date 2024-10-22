@@ -52,7 +52,7 @@ export async function pluginHookExport(_ctx: Context, request: Partial<HttpReque
       xs.push(NEWLINE);
     }
   } else if (typeof request.body?.query === 'string') {
-    const body = { query: request.body.query, variables: request.body.variables ?? undefined };
+    const body = { query: request.body.query || '', variables: maybeParseJSON(request.body.variables, {}) };
     xs.push('--data-raw', `${quote(JSON.stringify(body))}`);
     xs.push(NEWLINE);
   } else if (typeof request.body?.text === 'string') {
@@ -91,4 +91,12 @@ function quote(arg: string): string {
 
 function onlyEnabled(v: { name?: string; enabled?: boolean }): boolean {
   return v.enabled !== false && !!v.name;
+}
+
+function maybeParseJSON(v: any, fallback: any): string {
+  try {
+    return JSON.parse(v);
+  } catch (err) {
+    return fallback;
+  }
 }
